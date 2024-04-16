@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Linting</title>
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to html2pdf.js -->
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <style>
+        /* Your custom styles */
+        h1 {
+            margin-top: 80px;
+        }
+
+        button {
+            background-color: rgb(221, 245, 186);
+        }
+
+        #resultContainer {
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+    <script>
+        function lintXML() {
+            var xmlInput = document.getElementById('xmlInput').value;
+            var resultContainer = document.getElementById('resultContainer');
+            var errorContainer = document.getElementById('errorContainer');
+
+            try {
+                var parser = new DOMParser();
+                var xmlDoc = parser.parseFromString(xmlInput, 'application/xml');
+
+                // Check if parsing resulted in errors
+                var parserErrors = xmlDoc.getElementsByTagName('parsererror');
+                if (parserErrors.length > 0) {
+                    throw new Error('XML is not valid. Parser error.');
+                }
+
+                // Display parsed XML
+                resultContainer.innerHTML = new XMLSerializer().serializeToString(xmlDoc);
+                errorContainer.innerHTML = ''; // Clear any previous error messages
+            } catch (error) {
+                resultContainer.innerHTML = '';
+                errorContainer.innerHTML = 'XML is not valid. Error: ' + error.message;
+            }
+        }
+
+        function saveAsPDF() {
+            var resultContainer = document.getElementById('resultContainer');
+            
+            // Use html2pdf.js to create a PDF from the resultContainer
+            html2pdf(resultContainer);
+        }
+    </script>
+</head>
+<body class="container">
+    <h1>XML Linting</h1>
+    <label for="xmlInput">Enter XML Code:</label>
+    <textarea id="xmlInput" rows="12" cols="60" class="form-control"></textarea>
+    <br>
+    <button type="button" onclick="lintXML()" class="btn btn-primary">XML Linting</button>
+    <!-- Add Save as PDF button -->
+    <button type="button" onclick="saveAsPDF()" class="btn btn-success">Save as PDF</button>
+    <div id="resultContainer"></div>
+    <div id="errorContainer"></div>
+
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
